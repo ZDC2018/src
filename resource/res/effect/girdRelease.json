@@ -1,0 +1,40 @@
+{"mc":{
+	"girdRelease":{
+		"frameRate":12,
+		"labels":[
+			{"name":"girdRelease","frame":1,"end":4}
+			
+			],
+		"events":[
+			
+			],
+		"frames":[
+			
+			{
+			"res":"effect_scenebox_release_01",
+			"x":1,
+			"y":0
+			},
+			{
+			"res":"effect_scenebox_release_02",
+			"x":0,
+			"y":0
+			},
+			{
+			"res":"effect_scenebox_release_03",
+			"x":0,
+			"y":0
+			},
+			{
+			"res":"effect_scenebox_release_04",
+			"x":0,
+			"y":0
+			}
+			]
+}},
+	"res":{
+		"effect_scenebox_release_01":{"x":116,"y":104,"w":113,"h":102},
+		"effect_scenebox_release_04":{"x":0,"y":0,"w":114,"h":102},
+		"effect_scenebox_release_03":{"x":0,"y":104,"w":114,"h":102},
+		"effect_scenebox_release_02":{"x":116,"y":0,"w":114,"h":102}
+	}}

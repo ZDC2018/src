@@ -1,0 +1,40 @@
+{"mc":{
+	"newhouse":{
+		"frameRate":12,
+		"labels":[
+			{"name":"newhouse","frame":1,"end":4}
+			
+			],
+		"events":[
+			
+			],
+		"frames":[
+			
+			{
+			"res":"newhouses_effect_01",
+			"x":1,
+			"y":0
+			},
+			{
+			"res":"newhouses_effect_02",
+			"x":1,
+			"y":0
+			},
+			{
+			"res":"newhouses_effect_03",
+			"x":0,
+			"y":0
+			},
+			{
+			"res":"newhouses_effect_04",
+			"x":0,
+			"y":0
+			}
+			]
+}},
+	"res":{
+		"newhouses_effect_01":{"x":398,"y":402,"w":395,"h":400},
+		"newhouses_effect_03":{"x":0,"y":402,"w":396,"h":400},
+		"newhouses_effect_04":{"x":0,"y":0,"w":396,"h":400},
+		"newhouses_effect_02":{"x":398,"y":0,"w":395,"h":400}
+	}}

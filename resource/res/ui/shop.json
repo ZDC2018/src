@@ -1,0 +1,13 @@
+{"file":"shop.png","frames":{
+"shop_base_png":{"x":0,"y":0,"w":640,"h":396,"offX":0,"offY":0,"sourceW":640,"sourceH":396},
+"shop_bubble_png":{"x":804,"y":98,"w":93,"h":72,"offX":0,"offY":0,"sourceW":93,"sourceH":72},
+"shop_buy_01_png":{"x":804,"y":0,"w":147,"h":47,"offX":0,"offY":0,"sourceW":147,"sourceH":47},
+"shop_buy_02_png":{"x":791,"y":241,"w":147,"h":47,"offX":0,"offY":0,"sourceW":147,"sourceH":47},
+"shop_buy_lock_png":{"x":902,"y":172,"w":27,"h":38,"offX":0,"offY":0,"sourceW":27,"sourceH":38},
+"shop_card_png":{"x":642,"y":0,"w":160,"h":239,"offX":0,"offY":0,"sourceW":160,"sourceH":240},
+"shop_close_png":{"x":804,"y":172,"w":51,"h":52,"offX":0,"offY":0,"sourceW":51,"sourceH":52},
+"shop_money_01_png":{"x":857,"y":206,"w":28,"h":30,"offX":0,"offY":0,"sourceW":28,"sourceH":30},
+"shop_money_02_png":{"x":899,"y":98,"w":28,"h":30,"offX":0,"offY":0,"sourceW":28,"sourceH":30},
+"shop_new_png":{"x":857,"y":172,"w":43,"h":32,"offX":0,"offY":0,"sourceW":43,"sourceH":32},
+"shop_reward_share_png":{"x":804,"y":49,"w":147,"h":47,"offX":0,"offY":0,"sourceW":147,"sourceH":47},
+"shop_reward_video_png":{"x":642,"y":241,"w":147,"h":47,"offX":0,"offY":0,"sourceW":147,"sourceH":47}}}

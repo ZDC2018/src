@@ -55,7 +55,7 @@ class GameLogic {
 			this.setGbgShareTimer();
 			GameLogic.guide = false;
 		}else{
-			GameLogic.guide = false;//默认第一关true
+			GameLogic.guide = true;//默认第一关true
 		}
 
 

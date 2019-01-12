@@ -19,6 +19,9 @@ class WelcomeRetrunPanel  extends egret.Sprite
 		if (timeDiffrent >= 8*60*60){
 			timeDiffrent = 8*60*60;//最多计算8小时的收益
 		}
+		if(GameBackGround.hTimerStatus){
+			secCoin = CommonFuction.chu(secCoin,5)
+		}
 		this.profitNum = CommonFuction.cheng(secCoin,timeDiffrent.toString());
 		let profit = this.numZero(this.profitNum);
 		let profitLabel = new egret.TextField();

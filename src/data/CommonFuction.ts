@@ -264,7 +264,7 @@ public static jia(a, b) {
 	 * 数字去零计算
 	 */
 	public static numZero(num:any):string{
-		console.log("数字去0计算"+num);
+		// console.log("数字去0计算"+num);
 		let numString:string;
 		if(typeof(num) == "number"){
 			numString = Math.floor(num).toString();

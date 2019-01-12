@@ -17,8 +17,7 @@ class LevelGameDataParse {
 		}	
 		GameData.levelReqExp = val.up_exp;
 		GameData.boxDownWeight = Number(val.down_weight);
+		GameData.ordinaryBoxHouseGrade = Number(val.ordinarybox_lv);
 		GameData.giftBoxHouseGrade = Number(val.seniorbox_lv);
 	}
-
-
 }

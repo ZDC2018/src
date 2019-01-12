@@ -368,15 +368,15 @@ class ElementViewManage extends egret.EventDispatcher {
 			this.ev.time = GameData.elements[this.ev.id].time;
 			this.ev.grade = GameData.elements[this.ev.id].grade?GameData.elements[this.ev.id].grade:1 ;
 			if (GameData.elements[this.ev.id].time != 0){
-				this.addLevelExp(this.ev.grade);//开箱子加经验值
-				this._levelExpLabel.text = GameData.levelExp.toString() +"/"+GameData.levelReqExp.toString(); 
 				// //console.log(GameData.levelExp);
 				// this.showElementById(this.ev.id,false);
-				// this.ev.x  = this.ev.targetX();
-				// this.ev.y  = this.ev.targetY() - this.ev.height/2;
+				this.ev.x  = this.ev.targetX();
+				this.ev.y  = this.ev.targetY() - this.ev.height/2;
 				this.ev.show(100);
-				let evt:ElementViewManageEvent = new ElementViewManageEvent(ElementViewManageEvent.LEVEL_EXP_UP);
-				this.levelExpUp(evt);
+				this.addLevelExp(this.ev.grade);//开箱子加经验值
+				this._levelExpLabel.text = GameData.levelExp.toString() +"/"+GameData.levelReqExp.toString(); 
+				// let evt:ElementViewManageEvent = new ElementViewManageEvent(ElementViewManageEvent.LEVEL_EXP_UP);
+				// this.levelExpUp(evt);
 			}
 			this._touchStatus =false;
 			// this._currentTapID =this. ev.id;
@@ -565,11 +565,11 @@ class ElementViewManage extends egret.EventDispatcher {
 						// this.newHousePanel.getNewHosuePanel(this.elementViews[ev1.id].grade+1);
 						GameData.newHouse = true;
 						let evt:ElementViewManageEvent = new ElementViewManageEvent(ElementViewManageEvent.OPEN_NEW_HOUSE_PANEL);
-						evt.grade = this.elementViews[ev1.id].grade+1
+						evt.grade = Number(this.elementViews[ev1.id].grade)+1
 						this.dispatchEvent(evt);
 				
-						if ( this.elementViews[ev1.id].grade+1 >= GameData.maxHouseGrade){
-							GameData.maxHouseGrade = this.elementViews[ev1.id].grade+1;//当前获得房屋最高等级
+						if ( Number(this.elementViews[ev1.id].grade)+1 >= GameData.maxHouseGrade){
+							GameData.maxHouseGrade = Number(this.elementViews[ev1.id].grade)+1;//当前获得房屋最高等级
 						}
 						if(GameData.maxHouseGrade == 2){
 							// this.addHelpTip();
@@ -581,7 +581,7 @@ class ElementViewManage extends egret.EventDispatcher {
 						}
 						SoundUtils.instance().playNewHouseSound();//播放获得新房子音效
 					}else{
-						this.addLevelExp(GameData.elements[ev2.id].grade+1);//根据新和成的房子等级加经验值
+						this.addLevelExp(Number(GameData.elements[ev2.id].grade)+1);//根据新和成的房子等级加经验值
 					}
 					//console.log("消除动画");
 					if(GameData.elements[ev1.id].type !== 'b0' && GameData.elements[ev1.id].type !== 'b1'){
@@ -593,7 +593,7 @@ class ElementViewManage extends egret.EventDispatcher {
 					// //console.log("mapData删除后的值"+GameData.mapData[i][t]);					
 					this.elementViews[ev1.id].grade = GameData.elements[ev1.id].grade = 0;//删除的元素级别置为0
 					this.elementViews[ev1.id].time = GameData.elements[ev1.id].time = 0;//删除后元素的创建时间置为0;
-					GameData.elements[ev2.id].grade = GameData.elements[ev2.id].grade + 1;//合并后升级
+					GameData.elements[ev2.id].grade = Number(GameData.elements[ev2.id].grade)+ 1;//合并后升级
 					this.elementViews[ev2.id].grade = GameData.elements[ev2.id].grade;
 					this._levelExpLabel.text = GameData.levelExp.toString() +"/"+GameData.levelReqExp.toString(); 
 					this.barMask =  new egret.Rectangle(0, 0, GameData.levelExp/GameData.levelReqExp*this._expBar.width, this._expBar.height);
@@ -602,7 +602,8 @@ class ElementViewManage extends egret.EventDispatcher {
 					this.openBoxEffect(ev2.id);//合成房子特效
 					this.showElementById(ev2.id,false);
 					this.starHandler(ev2.targetX(),ev2.targetY());
-					this.elementViews[ev2.id].time = GameData.elements[ev2.id].time = new Date().getTime();//合并时间;
+					GameData.elements[ev2.id].time = new Date().getTime();//合并时间;
+					this.elementViews[ev2.id].time = GameData.elements[ev2.id].time;
 					if(GameData.availableMapId.length == 0){
 						this.timer.start();
 						if(!this.helpHandleTimer.running){
@@ -877,7 +878,7 @@ class ElementViewManage extends egret.EventDispatcher {
 	 * 生成免费分享奖励
 	 */
 	public addReward(){
-		console.log("生成免费奖励图标");
+		// console.log("生成免费奖励图标");
 		this._rewardShareIcon = ResourceUtils.createBitmapByName("shop#shop_bubble_png");
 		this._rewardShareIcon.x =  GameData.stageW - 15 - GameData.girdWidth*0.93 -this._rewardShareIcon.width;
 		this._rewardShareIcon.y = GameData.stageH - GameData.girdWidth*0.966 -30;
@@ -963,7 +964,7 @@ class ElementViewManage extends egret.EventDispatcher {
 	private addCoin():void{
 		// console.log("生成免费奖励次数："+this.rewardTimer.repeatCount);
 		// console.log("生成免费奖励当前次数："+this.rewardTimer.currentCount);	
-		console.log(this.rewardTimer.repeatCount - this.rewardTimer.currentCount);	
+		// console.log(this.rewardTimer.repeatCount - this.rewardTimer.currentCount);	
 		// //console.log("每秒加金币："+GameData.secCoin);
 		let secTotalcoin:string = this.addSecCoin();
 		// let gbg= new GameBackGround();

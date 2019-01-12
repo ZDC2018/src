@@ -21,7 +21,7 @@ class GameLogic {
 	private _returnGame:boolean  = true;//返回游戏
 	public static closeShare:boolean;
 	public static guide:boolean;//新手引导
-	public static version:string = "1.12.1";//新手引导
+	public static version:string = "1.13.1";//新手引导
 	private init(){
 		GameData.initData();  //初始化数据
 		if (this._returnGame && !GameLogic.guide){

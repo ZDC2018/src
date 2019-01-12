@@ -71,7 +71,7 @@ class ChangeScenePanel extends egret.EventDispatcher {
         //console.log("场景解锁:");        
         let scenes = new egret.Sprite();
         let sceneName:string[] = ["海岸绿野","黄金农场","塞北雪乡","缤纷小镇","不夜之城"]
-        let unlockedLevel:number[] = [1,5,12,20,31];
+        let unlockedLevel:number[] = [1,6,15,25,35];
         scenes.width = GameData.stageW*0.965
         let n:number  = 0
         if (GameData.setSceneId > 0) {

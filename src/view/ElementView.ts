@@ -84,7 +84,9 @@ class ElementView extends egret.Sprite {
 		let evt3:ElementViewManageEvent = new ElementViewManageEvent(ElementViewManageEvent.GUIDE_STEP_THREE);
 
 		if( GameData.elements[this.id].type == "b0"){
-			GameData.elements[this.id].grade = 1;	
+			if(GameData.elements[this.id].grade == 0){
+				GameData.elements[this.id].grade = GameData.ordinaryBoxHouseGrade;
+			}
 			SoundUtils.instance().playOpenBoxSound();
 		}else if (GameData.elements[this.id].type == "b1"){
 			if(GameData.elements[this.id].grade == 0){
@@ -92,6 +94,7 @@ class ElementView extends egret.Sprite {
 			}
 			SoundUtils.instance().playOpenGiftBoxSound();
 		}
+		// console.log(GameData.elements[this.id].grade);
 		GameData.elements[this.id].type = "0";				
 		this.setTexture("house#houses_a_"+this.addPreZero(GameData.elements[this.id].grade)+"_big" );
 		GameData.elements[this.id].time = new Date().getTime();//创建时间

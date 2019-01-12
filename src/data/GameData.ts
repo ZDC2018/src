@@ -42,6 +42,7 @@ class GameData {
 	public static levelReqExp:number = 0;//当前关卡过关需要的经验值,
 	public static levelCoin:string = '0';//当前关卡过关奖励的金币,
 	public static boxDownWeight:number = 0;//当前关卡箱子掉落权重
+	public static ordinaryBoxHouseGrade:number = 1;//当前关卡普通箱打开房子等级
 	public static giftBoxHouseGrade:number = 2;//当前关卡礼物箱打开房子等级
 	public static availableMapId:number[];//当前关卡可以使用的mapid,
 	public static getVideoAd:boolean;//获取视频广告是否成功,

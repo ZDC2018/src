@@ -265,22 +265,34 @@ public static jia(a, b) {
 	 */
 	public static numZero(num:any):string{
 		// console.log("数字去0计算"+num);
-		let numString:string;
-		if(typeof(num) == "number"){
-			numString = Math.floor(num).toString();
-		}else{
-			// numString = num.split(".")[0];
-			numString = num;
+		try {
+			let numString:string;
+			if(typeof(num) == "number"){
+				numString = Math.floor(num).toString();
+			}else if (typeof(num) == "string"){
+				// numString = num.split(".")[0];
+				numString = num;
+			}
+			
+			let numLength:number = numString.length;
+			if (!numString)
+				throw "numString is null or undefined";
+			let zeroNumber:number = Math.floor( (numLength-1) / 3);
+			if (zeroNumber > 0){
+				
+					numString = numString.slice(0,-1*zeroNumber*3) + "."+numString.slice(numLength-zeroNumber*3,numLength-zeroNumber*3+2)+ GameData.zeroConfigArr[zeroNumber - 1].company;
+					if(typeof(zeroNumber) != "number")
+						throw "zeroNumber not a Number";
+					if(!zeroNumber)
+						throw "zeroNumber undefined or null";		
+			}else{
+				numString = num.toString();
+			}
+			return numString;
+		}catch(e){
+			console.log(e);
 		}
-		let numLength:number = numString.length;
 		
-		let zeroNumber:number = Math.floor( (numLength-1) / 3);
-		if (zeroNumber > 0){
-				numString = numString.slice(0,-1*zeroNumber*3) + "."+numString.slice(numLength-zeroNumber*3,numLength-zeroNumber*3+2)+ GameData.zeroConfigArr[zeroNumber - 1].company;		
-		}else{
-			numString = num.toString();
-		}
-		return numString;
 	}
 
 	public static compareVersion(v1, v2) {

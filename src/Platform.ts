@@ -21,7 +21,7 @@ declare interface Platform {
     destroyUserInfoButton():Promise<any>;
 
     //广告
-    createRewardedVideoAd():Promise<any>; 
+    createRewardedVideoAd(id:string):Promise<any>; 
     rewardedVideoAdOnClose(rvad:any):Promise<any>; 
     showBannerAD(left:number,top:number,width:number,id:string):Promise<any>; 
 
@@ -30,7 +30,7 @@ declare interface Platform {
 
     onShow(callback: Function, obj: Object):void; 
     onHide(callback: Function, obj: Object):void; 
-    getLaunchOptionsSync();
+    getLaunchOptionsSync(callback: Function, obj: Object):void; 
     postGameData(dbname:string,userGameData:Object)
     getGameData(dbname:string)
     //音频
@@ -60,7 +60,7 @@ class DebugPlatform implements Platform {
     async createUserInfoButton(){
        
     }
-    async createRewardedVideoAd(){
+    async createRewardedVideoAd(id:string){
        
     }
     async rewardedVideoAdOnClose(){
@@ -81,7 +81,7 @@ class DebugPlatform implements Platform {
 
     async onHide(callback: Function, obj: Object){
     }
-    async getLaunchOptionsSync(){
+    async getLaunchOptionsSync(callback: Function, obj: Object){
 
     }
     async postGameData(dbname:string,userGameData:Object){

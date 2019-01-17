@@ -46,6 +46,7 @@ class GameData {
 	public static giftBoxHouseGrade:number = 2;//当前关卡礼物箱打开房子等级
 	public static availableMapId:number[];//当前关卡可以使用的mapid,
 	public static getVideoAd:boolean;//获取视频广告是否成功,
+	public static get5xVideoAd:boolean;//获取5x视频广告是否成功,
 
 	 //舞台宽高，此封装为了方便调用
     public static stageW:number = 0;

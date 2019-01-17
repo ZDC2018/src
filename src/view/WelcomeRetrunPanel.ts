@@ -23,7 +23,7 @@ class WelcomeRetrunPanel  extends egret.Sprite
 			secCoin = CommonFuction.chu(secCoin,5)
 		}
 		this.profitNum = CommonFuction.cheng(secCoin,timeDiffrent.toString());
-		let profit = this.numZero(this.profitNum);
+		let profit = CommonFuction.numZero(this.profitNum);
 		let profitLabel = new egret.TextField();
 		profitLabel.text = profit;
 		profitLabel.width = panelBase.width/3 + panelBase.width/10;
@@ -125,7 +125,7 @@ class WelcomeRetrunPanel  extends egret.Sprite
 	}
 	/**	
 	 * 数字去零计算
-	 */
+	 
 	private numZero(num:any):string{
 		// console.log("数字去0计算"+num);
 		let numString:string;
@@ -144,5 +144,5 @@ class WelcomeRetrunPanel  extends egret.Sprite
 		}
 		return numString;
 	}
-
+	*/
 }

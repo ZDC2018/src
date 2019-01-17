@@ -57,7 +57,7 @@ class Main extends egret.DisplayObjectContainer {
         // //console.log(GameData.scentHeight);
         //初始化Resource资源加载库
         //initiate Resource loading library
-        RES.setMaxLoadingThread(1)
+        
         RES.addEventListener(RES.ResourceEvent.CONFIG_COMPLETE, this.onConfigComplete, this);
         RES.loadConfig("resource/default.res.json", "resource/");
     }
@@ -97,6 +97,8 @@ class Main extends egret.DisplayObjectContainer {
             RES.removeEventListener(RES.ResourceEvent.GROUP_LOAD_ERROR, this.onResourceLoadError, this);
             RES.removeEventListener(RES.ResourceEvent.GROUP_PROGRESS, this.onResourceProgress, this);
             RES.removeEventListener(RES.ResourceEvent.ITEM_LOAD_ERROR, this.onItemLoadError, this);
+            RES.setMaxLoadingThread(1)
+            await  RES.loadGroup("sound",1);
             this.createGameScene();
             await platform.login();
             await platform.showShareMenu();
@@ -175,7 +177,7 @@ class Main extends egret.DisplayObjectContainer {
         var request = <egret.HttpRequest>event.currentTarget;
         console.log("get data : ",request.response);
         egret.clearTimeout(this._timeout);
-		if( CommonFuction.compareVersion(GameLogic.version,request.response) >= 0){
+		if( CommonFuction.compareVersion(GameLogic.version,request.response) == 0){
 			GameLogic.closeShare = true;
 		}else{
 			GameLogic.closeShare = false;
@@ -198,9 +200,6 @@ class Main extends egret.DisplayObjectContainer {
      * Create a game scene
      */
     private createGameScene():void {
-        if (GameData.currentLevel != 1 ){
-			GameLogic.guide = false;
-		}
         let gameLayer:egret.Sprite=new egret.Sprite();
         this.addChild(gameLayer);
         this._gl =new GameLogic(gameLayer);

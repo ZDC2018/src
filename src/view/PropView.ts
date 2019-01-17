@@ -105,7 +105,11 @@ class PropView extends egret.Sprite {
 			textureName = "ui_ranking_png";
 			break;
 			case 1:
-                textureName = "ui_sound_open_png";
+				if(!GameData.closeMusic){
+					textureName = "ui_sound_open_png";
+				}else{
+					textureName = "ui_sound_close_png";
+				}
                 break;
             case 2:
                 textureName = "ui_bigbox_hit_01_png";

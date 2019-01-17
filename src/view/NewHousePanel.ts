@@ -28,7 +28,11 @@ class NewHousePanel  extends egret.EventDispatcher {
         newHouseMask.touchEnabled = true;
 
 		let houseNameLabel:egret.TextField =new egret.TextField();
-		houseNameLabel.text = GameData.availableBuyHouseArr[grade-1].housename;
+		try{
+			houseNameLabel.text = GameData.availableBuyHouseArr[grade-1].housename;
+		}catch(e){
+			console.log(e);
+		}
 		houseNameLabel.textAlign = egret.HorizontalAlign.CENTER;		
 		houseNameLabel.fontFamily = "黑体";
 		houseNameLabel.size = 30;
@@ -72,8 +76,12 @@ class NewHousePanel  extends egret.EventDispatcher {
 		let newHouseCoin:egret.Bitmap  = ResourceUtils.createBitmapByName("ui_money_total_png");
 		newHouseCoin.x = shareBtn.x - newHouseCoin.width/2;
 		newHouseCoin.y = shareBtn.y  - newHouseCoin.height -50;
-
-		this.housePrice=  GameData.houseDownArr[GameData.maxHouseGrade].first_synthesis;
+		try{
+			this.housePrice=  GameData.houseDownArr[GameData.maxHouseGrade].first_synthesis;
+		}catch(e){
+			console.log(e);
+		}
+		
 		let newHouseCoinLabel:egret.TextField =new egret.TextField();
 		newHouseCoinLabel.text = "X"+CommonFuction.numZero(this.housePrice);
 		newHouseCoinLabel.textAlign = egret.HorizontalAlign.LEFT;
@@ -85,13 +93,14 @@ class NewHousePanel  extends egret.EventDispatcher {
 
 		let closeBtn:egret.TextField =new egret.TextField();
 		closeBtn.width = shareBtn.width;
-		closeBtn.text = "跳过";
+		// closeBtn.text = "跳过";
 		closeBtn.textAlign = egret.HorizontalAlign.CENTER;
 		closeBtn.fontFamily = "黑体";
 		closeBtn.size = 36;
 		closeBtn.textColor = 0Xffffff;
 		closeBtn.x = shareBtn.x;
-		closeBtn.y = shareBtn.y + shareBtn.height + 60;
+		closeBtn.textFlow = <Array<egret.ITextElement>>[{text:"跳过",style: {"underline": true}}]
+		
 		closeBtn.touchEnabled = true;
 		closeBtn.addEventListener(egret.TouchEvent.TOUCH_TAP,this.closeNewHousePanel,this);
         this._newHousePanel.addChild(newHouseMask);
@@ -104,9 +113,11 @@ class NewHousePanel  extends egret.EventDispatcher {
 		let waitTime:number = 0;
         if(!GameLogic.closeShare){
            	this._newHousePanel.addChild(shareBtn);
+			closeBtn.y = shareBtn.y + shareBtn.height + 60;
             waitTime = 3000;
         }else{
-            waitTime = 500;
+            waitTime = 300;
+			closeBtn.y = newHouseCoin.y +newHouseCoin.height + 10;
         }
 		this._newHousePanel.addChild(newHouseCoin);
 		this._newHousePanel.addChild(newHouseCoinLabel);
@@ -128,7 +139,13 @@ class NewHousePanel  extends egret.EventDispatcher {
 		let res = this.dispatchEvent(event);
 		// console.log(res);
 		// console.log(event);
-		this.bannerAd.destroy();
+		try{
+         this.bannerAd && this.bannerAd.destroy();
+         if(!this.bannerAd)
+            throw "bannerAd undifined";
+        }catch(e){
+            console.log(e);
+        }
 	}
 
 	private share(){

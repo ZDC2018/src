@@ -229,10 +229,10 @@ class PropViewManage {
         // this.closeBtn.y = (1136 - GameData.stageW*1.5) + GameData.stageW*1.5*0.038 +5;
         this.closeBtn = new egret.Shape();
         this.closeBtn.width = GameData.girdWidth;
-        this.closeBtn.height = GameData.girdWidth;
+        this.closeBtn.height = GameData.girdWidth *1.2;
         this.closeBtn.graphics.beginFill(0x000000, 0);
         let x = GameData.stageW -GameData.stageW*0.01 - this.closeBtn.width -5;
-        let y = (1136 - GameData.stageW*1.5) + GameData.stageW*1.5*0.038 -5;
+        let y = (1136 - GameData.stageW*1.5) + GameData.stageW*1.5*0.038 -15;
        	this.closeBtn.graphics.drawRect(x,y,this.closeBtn.width,this.closeBtn.height);
       	this.closeBtn.graphics.endFill();
         this.closeBtn.touchEnabled = true;

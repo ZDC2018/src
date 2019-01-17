@@ -42,18 +42,18 @@ class MapControl {
 						GameData.elements[id].type =  GameData.oldElements[0].type;
 						// GameData.elements[id].location = i*GameData.MaxRow+t;
 						if(GameData.oldElements[0].location != 0){
-							GameData.elements[id].location = GameData.oldElements[0].location;
-							GameData.elements[id].grade = GameData.oldElements[0].grade;
-							GameData.elements[id].time = GameData.oldElements[0].time;
+							GameData.elements[id].location = Number(GameData.oldElements[0].location);
+							GameData.elements[id].grade = Number(GameData.oldElements[0].grade);
+							GameData.elements[id].time = Number(GameData.oldElements[0].time);
 							// console.log("创建空地图old不等于0"+GameData.oldElements[0].location);
 							// console.log("创建空地图id"+id);
 							// console.log("创建空地图i:"+i);
 							// console.log("创建空地图t:"+t);
 							// console.log("创建空地图location:"+GameData.elements[id].location);	
 						}else if( (GameData.oldElements[0].location == 0) && (GameData.oldElements[0].type.length !== 0)){
-							GameData.elements[id].location = GameData.oldElements[0].location;
-							GameData.elements[id].grade = GameData.oldElements[0].grade;
-							GameData.elements[id].time = GameData.oldElements[0].time;							
+							GameData.elements[id].location = Number(GameData.oldElements[0].location);
+							GameData.elements[id].grade = Number(GameData.oldElements[0].grade);
+							GameData.elements[id].time =Number( GameData.oldElements[0].time);							
 							// console.log("创建空地图old等于0"+GameData.oldElements[0].location);
 							// console.log("创建空地图id"+id);
 							// console.log("创建空地图i:"+i);

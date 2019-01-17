@@ -233,10 +233,11 @@ class ElementViewManage extends egret.EventDispatcher {
 		// //console.log(userGameData);
 		SoundUtils.instance().playBg();
 
-		if(GameLogic.guide && GameData.currentLevel ==1){
-			let evt:ElementViewManageEvent = new ElementViewManageEvent(ElementViewManageEvent.GUIDE_RESET);
-			this.dispatchEvent(evt);
-		}
+		// if(GameLogic.guide && GameData.currentLevel ==1){
+		// 	let evt:ElementViewManageEvent = new ElementViewManageEvent(ElementViewManageEvent.GUIDE_RESET);
+		// 	this.dispatchEvent(evt);
+		// 	console.log(evt);
+		// }
 		let currentTime:number = new Date().getTime();
 		let wspTime:string = egret.localStorage.getItem("wrpTime");//欢迎回来
 		let nhTime:string = egret.localStorage.getItem("nhTime");//新房子
@@ -319,7 +320,7 @@ class ElementViewManage extends egret.EventDispatcher {
 		inMapArr = [].concat(GameData.elements);
 		//console.log("退出前台,记录数据");
 		let userGameData = JSON.stringify({"currentLevel":GameData.currentLevel,"levelExp":GameData.levelExp,"cost":GameData.cost,"coin":GameData.coin,"secCoin":secCoin,"due":new Date().getTime(),
-		"inMap":inMapArr,"maxHouseGrade":maxHouseGrade,"buyHouseNumber":GameData.houseBuyNumber,"closeMusic":GameData.closeMusic,"closeBgMusic":GameData.closeBgMusic,"addReward":this._addReward,
+		"inMap":inMapArr,"maxHouseGrade":maxHouseGrade,"buyHouseNumber":GameData.houseBuyNumber,"closeMusic":GameData.closeMusic,"closeBgMusic":GameData.closeBgMusic,"guide":GameLogic.guide,"addReward":this._addReward,
 		"elementTypeFirstShow":GameData.elementTypeFirstShow});
 		egret.localStorage.setItem("userGameData",userGameData);	
 	}
@@ -572,7 +573,6 @@ class ElementViewManage extends egret.EventDispatcher {
 							GameData.maxHouseGrade = Number(this.elementViews[ev1.id].grade)+1;//当前获得房屋最高等级
 						}
 						if(GameData.maxHouseGrade == 2){
-							// this.addHelpTip();
 							this.timerToBox2();
 						}
 					
@@ -651,42 +651,44 @@ class ElementViewManage extends egret.EventDispatcher {
 	 */
 	public addLastLevelElements():void{
 		//console.log("添加上一关的留存元素:")
-		let ele:ElementView;
-		let len:number = GameData.MaxRow *  GameData.MaxColumn;
-		for(let l=0;l<len;l++){
-			ele = this.elementViews[l];
-			ele.grade = GameData.elements[l].grade;
-			ele.location = GameData.elements[l].location;
-			ele.time = GameData.elements[l].time;
-			ele.x = ele.targetX();
-			ele.y = GameData.startY - ele.width;
-			let i = Math.floor( ele.location /GameData.MaxColumn);
-			let t = ele.location % GameData.MaxColumn;//修改成4*5地图后，t的计算方式变化
-			// //console.log("所有id: "+ele.id);
-			// //console.log("type: "+GameData.elements[l].type );
-			if(GameData.elements[l].type == "b1"){
-				ele.grade = 0;
-				GameData.mapData[i][t] = ele.id;			
-				ele.setTexture( "ui_box_gift_png" );
-				ele.showBox((50*GameData.MaxColumn*GameData.MaxRow-50*GameData.unmapnum)-(i*GameData.MaxRow+t)*50,-7);
-				// //console.log("添加上一关的留存元素:"+GameData.elements[l].type);						
-			}else if(ele.grade == 0 && GameData.elements[l].type == "b0"){
-				GameData.mapData[i][t] = ele.id;			
-				ele.setTexture( "ui_box_general_png" );
-				ele.showBox((50*GameData.MaxColumn*GameData.MaxRow-50*GameData.unmapnum)-(i*GameData.MaxRow+t)*50);
-				// //console.log("添加上一关的留存元素:"+GameData.elements[l].type);		
-			}else if (GameData.elements[l].grade != 0 && GameData.elements[l].type != "b1"){
-				GameData.mapData[i][t] = ele.id;
-				ele.setTexture( "house#houses_a_"+this.addPreZero(ele.grade)+"_big" );		
-				ele.show((50*GameData.MaxColumn*GameData.MaxRow-50*GameData.unmapnum)-(i*GameData.MaxRow+t)*50);
-				// GameData.availableMapId.splice(l,1);//将使用过的MapId从可用数组里面删除
-				// //console.log("availableMapId:"+GameData.availableMapId);
+		try{
+			let ele:ElementView;
+			let len:number = GameData.MaxRow *  GameData.MaxColumn;
+			for(let l=0;l<len;l++){
+				ele = this.elementViews[l];
+				ele.grade = GameData.elements[l].grade;
+				ele.location = GameData.elements[l].location;
+				ele.time = GameData.elements[l].time;
+				ele.x = ele.targetX();
+				ele.y = GameData.startY - ele.width;
+				let i = Math.floor( ele.location /GameData.MaxColumn);
+				let t = ele.location % GameData.MaxColumn;//修改成4*5地图后，t的计算方式变化
+				// //console.log("所有id: "+ele.id);
+				// //console.log("type: "+GameData.elements[l].type );
+				if(GameData.elements[l].type == "b1"){
+					ele.grade = 0;
+					GameData.mapData[i][t] = ele.id;			
+					ele.setTexture( "ui_box_gift_png" );
+					ele.showBox((50*GameData.MaxColumn*GameData.MaxRow-50*GameData.unmapnum)-(i*GameData.MaxRow+t)*50,-7);
+					// //console.log("添加上一关的留存元素:"+GameData.elements[l].type);						
+				}else if(ele.grade == 0 && GameData.elements[l].type == "b0"){
+					GameData.mapData[i][t] = ele.id;			
+					ele.setTexture( "ui_box_general_png" );
+					ele.showBox((50*GameData.MaxColumn*GameData.MaxRow-50*GameData.unmapnum)-(i*GameData.MaxRow+t)*50);
+					// //console.log("添加上一关的留存元素:"+GameData.elements[l].type);		
+				}else if (GameData.elements[l].grade != 0 && GameData.elements[l].type != "b1"){
+					GameData.mapData[i][t] = ele.id;
+					ele.setTexture( "house#houses_a_"+this.addPreZero(ele.grade)+"_big" );		
+					ele.show((50*GameData.MaxColumn*GameData.MaxRow-50*GameData.unmapnum)-(i*GameData.MaxRow+t)*50);
+					// GameData.availableMapId.splice(l,1);//将使用过的MapId从可用数组里面删除
+					// //console.log("availableMapId:"+GameData.availableMapId);
+				}							
 			}
-			// console.log("剩余空地:");
-			// console.log(GameData.availableMapId.length);
-			// console.log(GameData.availableMapId);
-				//console.log("添加上一关的留存元素"+ele.time);									
+
+		}catch(e){
+			console.log(e);
 		}
+		
 	}
 
 	/*
@@ -694,38 +696,40 @@ class ElementViewManage extends egret.EventDispatcher {
 	*author:bigfoot
 	*/
 	public showElement(){
-		//console.log("开场随机元素掉落");		
-		let ele:ElementView;
-		if (GameData.availableMapId.length != 0){
-			let l = Math.floor(Math.random()*GameData.availableMapId.length);
-			let id = GameData.availableMapId[l];//随机从可以使用的MapId里面抽取一个
-			let i = Math.floor( GameData.elements[id].location /GameData.MaxColumn);
-			let t = GameData.elements[id].location % GameData.MaxColumn;//修改成4*5地图后，t的计算方式变化
-			
-			// //console.log("随机id: "+id);
-			// //console.log("随机i: "+i);
-			// //console.log("随机t: "+t);
-			// //console.log(GameData.mapData[i][t]);
-			if(GameData.mapData[i][t]!=-1 ){
-				GameData.mapData[i][t] = id;
-				ele = this.elementViews[GameData.mapData[i][t]];
-				GameData.elements[id].type = "b0";
-				ele.setTexture( "ui_box_general_png" );
-				ele.x = ele.targetX();
-				ele.y = GameData.startY - ele.width;
-				ele.showBox((50*GameData.MaxColumn*GameData.MaxRow-50*GameData.unmapnum)-(i*GameData.MaxRow+t)*50);
-				SoundUtils.instance().playBoxDownSound()//播放箱子掉落音效
-				GameData.availableMapId.splice(l,1);//将使用过的MapId从可用数组里面删除
-				this.timerToBox2()
-				// console.log("剩余空地:");
-				// console.log(GameData.availableMapId.length);
-				// console.log(GameData.availableMapId);
+		//console.log("开场随机元素掉落");	
+		try{
+			let ele:ElementView;
+			if (GameData.availableMapId.length != 0){
+				let l = Math.floor(Math.random()*GameData.availableMapId.length);
+				let id = GameData.availableMapId[l];//随机从可以使用的MapId里面抽取一个
+				let i = Math.floor( GameData.elements[id].location /GameData.MaxColumn);
+				let t = GameData.elements[id].location % GameData.MaxColumn;//修改成4*5地图后，t的计算方式变化
+				
+				// //console.log("随机id: "+id);
+				// //console.log("随机i: "+i);
+				// //console.log("随机t: "+t);
+				// //console.log(GameData.mapData[i][t]);
+				if(GameData.mapData[i][t]!=-1 ){
+					GameData.mapData[i][t] = id;
+					ele = this.elementViews[GameData.mapData[i][t]];
+					GameData.elements[id].type = "b0";
+					ele.setTexture( "ui_box_general_png" );
+					ele.x = ele.targetX();
+					ele.y = GameData.startY - ele.width;
+					ele.showBox((50*GameData.MaxColumn*GameData.MaxRow-50*GameData.unmapnum)-(i*GameData.MaxRow+t)*50);
+					SoundUtils.instance().playBoxDownSound()//播放箱子掉落音效
+					GameData.availableMapId.splice(l,1);//将使用过的MapId从可用数组里面删除
+					this.timerToBox2()
+					// console.log("剩余空地:");
+					// console.log(GameData.availableMapId.length);
+					// console.log(GameData.availableMapId);
+				}
+			}else{
+				this.timerToBox2();
 			}
-		}else{
-			this.timerToBox2();
-		}
-		// //console.log("可用地图Id: "+GameData.availableMapId);
-		
+		}catch(e){
+			console.log(e);
+		}	
 	}
 
 	/*
@@ -735,65 +739,50 @@ class ElementViewManage extends egret.EventDispatcher {
 	public showRandomElement(){
 		//console.log("随机掉落开始");	
 		let ele:ElementView;
-		
-		// console.log("可用地图Id: "+GameData.availableMapId);
-		// //console.log("mapData: "+GameData.mapData);
-		// //console.log("elements: "+GameData.elements);
-		for(let l:number = 0;l<GameData.availableMapId.length;l++){
+		try {
+			for(let l:number = 0;l<GameData.availableMapId.length;l++){
 			let id:number = GameData.availableMapId[l];
 			let i = Math.floor( GameData.elements[id].location /GameData.MaxColumn);
 			let t = GameData.elements[id].location % GameData.MaxColumn;
-			// //console.log("随机id: "+id);
-			// //console.log("随机元素的type: "+GameData.elements[id].type);
-			// //console.log("随机元素的location: "+GameData.elements[id].location);
-			// //console.log("随机i: "+i);
-			// //console.log("随机t: "+t);
+
 			if(GameData.mapData[i][t] != -2 ){
 				GameData.availableMapId.splice(l,1);
 			}
-		}
-		// console.log("可用地图Id2: "+GameData.availableMapId);
-		if (GameData.availableMapId.length == 0 ){
-			this.timer.stop();
-			this.removeHelpHandle();
-			this.helpHandleTimer.stop();//没有多余空地时候不显示指示助手
-		}else{
-			let l = Math.floor(Math.random()*GameData.availableMapId.length);
-			let id = GameData.availableMapId[l];//随机从可以使用的MapId里面抽取一个
-			let i = Math.floor( GameData.elements[id].location /GameData.MaxColumn);
-			let t = GameData.elements[id].location % GameData.MaxColumn;
-			GameData.mapData[i][t] = id;
-			ele = this.elementViews[GameData.mapData[i][t]];
-			ele.location = GameData.elements[id].location;
-			let ran=Math.ceil(Math.random()*100);
-			if (ran <= GameData.boxDownWeight){	
-				GameData.elements[id].type = "b0";
-				ele.setTexture( "ui_box_general_png" );
-			}else if(GameData.boxDownWeight < ran){
-				GameData.elements[id].type = "b1";
-				ele.setTexture( "ui_box_gift_png" );
 			}
-			ele.x = ele.targetX();
-			ele.y = GameData.startY - ele.width;
-			ele.grade = 0;
-			// //console.log("ele.y: "+ele.y)
-			// //console.log("ele.targety: "+ele.targetY())
-			ele.showBox((50*GameData.MaxColumn*GameData.MaxRow-50*GameData.unmapnum)-(i*GameData.MaxRow+t)*50,-7);
-			SoundUtils.instance().playBoxDownSound()//播放箱子掉落音效
-			GameData.availableMapId.splice(l,1);//将使用过的MapId从可用数组里面删除
-			// //console.log("随机id: "+id);
-			// //console.log("随机元素的type: "+GameData.elements[id].type);
-			// //console.log("随机元素的location: "+ele.location);
-			// //console.log("随机元素的grade: "+ele.grade);
-			// //console.log("随机i: "+i);
-			// //console.log("随机t: "+t);
-			// //console.log("随机元素: ");
-			// //console.log(GameData.elements[id]);
-			// //console.log(GameData.mapData[i][t]);
-			// console.log("剩余空地:");
-			// console.log(GameData.availableMapId.length);
-			// console.log(GameData.availableMapId);
-		}	
+			// console.log("可用地图Id2: "+GameData.availableMapId);
+			if (GameData.availableMapId.length == 0 ){
+				this.timer.stop();
+				this.removeHelpHandle();
+				this.helpHandleTimer.stop();//没有多余空地时候不显示指示助手
+			}else{
+				let l = Math.floor(Math.random()*GameData.availableMapId.length);
+				let id = GameData.availableMapId[l];//随机从可以使用的MapId里面抽取一个
+				let i = Math.floor( GameData.elements[id].location /GameData.MaxColumn);
+				let t = GameData.elements[id].location % GameData.MaxColumn;
+				GameData.mapData[i][t] = id;
+				ele = this.elementViews[GameData.mapData[i][t]];
+				ele.location = GameData.elements[id].location;
+				let ran=Math.ceil(Math.random()*100);
+				if (ran <= GameData.boxDownWeight){	
+					GameData.elements[id].type = "b0";
+					ele.setTexture( "ui_box_general_png" );
+				}else if(GameData.boxDownWeight < ran){
+					GameData.elements[id].type = "b1";
+					ele.setTexture( "ui_box_gift_png" );
+				}
+				ele.x = ele.targetX();
+				ele.y = GameData.startY - ele.width;
+				ele.grade = 0;
+				// //console.log("ele.y: "+ele.y)
+				// //console.log("ele.targety: "+ele.targetY())
+				ele.showBox((50*GameData.MaxColumn*GameData.MaxRow-50*GameData.unmapnum)-(i*GameData.MaxRow+t)*50,-7);
+				SoundUtils.instance().playBoxDownSound()//播放箱子掉落音效
+				GameData.availableMapId.splice(l,1);//将使用过的MapId从可用数组里面删除
+			}	
+		}catch(e){
+			console.log(e);
+		}
+		
 	}
 
 	
@@ -804,37 +793,44 @@ class ElementViewManage extends egret.EventDispatcher {
 	public showElementById(id:number,isFirst:boolean = true){
 		// console.log("指定id元素掉落");
 		// let GameData.startY:number  = (GameData.stageH - (GameData.stageW - 30)/6 - 60 )-GameData.girdWidth*GameData.MaxRow;
-		let ele:ElementView;
-		let i = Math.floor( GameData.elements[id].location /GameData.MaxColumn);
-		let t =GameData.elements[id].location % GameData.MaxColumn;
-		if( GameData.mapData[i][t] != -1){
-			// GameData.mapData[i][t] = id;
-			ele = this.elementViews[id];
-			ele.x = ele.targetX();
-			if(isFirst){
-				ele.y = GameData.startY - ele.width;
-			}else{
-				// ele.y = ele.targetY() + ele.height/4;
-				ele.y = ele.targetY();
-			}
-			// console.log(GameData.elements[id].type);
-			if(GameData.elements[id].type == "b"){
-				GameData.elements[id].type = "b0";
-				GameData.mapData[i][t] = id;
-				ele.setTexture( "ui_box_general_png" );
-				ele.showBox((50*GameData.MaxColumn*GameData.MaxRow-50*GameData.unmapnum)-(i*GameData.MaxRow+t)*50);
-				let index = GameData.availableMapId.indexOf(id);
-				GameData.availableMapId.splice(index,1);
-			}else{
-				ele.setTexture( "house#houses_a_"+this.addPreZero(this.elementViews[id].grade)+"_big" );
-				ele.show((50*GameData.MaxColumn*GameData.MaxRow-50*GameData.unmapnum)-(i*GameData.MaxRow+t)*50);
-			}
-			// console.log("剩余空地:");
-			// console.log(GameData.availableMapId.length);
-			// console.log(GameData.availableMapId);
+		try{
+			let ele:ElementView;
+			let i = Math.floor( GameData.elements[id].location /GameData.MaxColumn);
+			let t =GameData.elements[id].location % GameData.MaxColumn;
+			if( GameData.mapData[i][t] != -1){
+				// GameData.mapData[i][t] = id;
+				ele = this.elementViews[id];
+				ele.x = ele.targetX();
+				if(isFirst){
+					ele.y = GameData.startY - ele.width;
+				}else{
+					// ele.y = ele.targetY() + ele.height/4;
+					ele.y = ele.targetY();
+				}
+				// console.log(GameData.elements[id].type);
+				if(GameData.elements[id].type == "b"){
+					GameData.elements[id].type = "b0";
+					GameData.mapData[i][t] = id;
+					ele.grade = GameData.elements[id].grade;
+					ele.time = GameData.elements[id].time;
+					ele.setTexture( "ui_box_general_png" );
+					ele.showBox((50*GameData.MaxColumn*GameData.MaxRow-50*GameData.unmapnum)-(i*GameData.MaxRow+t)*50);
+					let index = GameData.availableMapId.indexOf(id);
+					GameData.availableMapId.splice(index,1);
+				}else{
+					ele.setTexture( "house#houses_a_"+this.addPreZero(this.elementViews[id].grade)+"_big" );
+					ele.show((50*GameData.MaxColumn*GameData.MaxRow-50*GameData.unmapnum)-(i*GameData.MaxRow+t)*50);
+				}
+				// console.log("剩余空地:");
+				// console.log(GameData.availableMapId.length);
+				// console.log(GameData.availableMapId);
 
-			// this._currentTapID = -1;
+				// this._currentTapID = -1;
+			}
+		}catch(e){
+			console.log(e);
 		}
+		
 	}
 
 	/*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -869,6 +865,25 @@ class ElementViewManage extends egret.EventDispatcher {
 			this.rewardTimer.reset();//如果已经有了，那么重新开始计时
 			this.rewardTimer.start();
 		} 
+    }
+	/**
+	 * 本关结束，停止所有计时器
+	 */
+	public timerStop(){
+		// //console.log("开场元素掉落完成以后可用地图Id: "+GameData.availableMapId);
+		// this.timer = new egret.Timer(1000, 0);//
+
+		this.timer.removeEventListener(egret.TimerEvent.TIMER, this.timeFuc, this);
+		this.coinTimer.removeEventListener(egret.TimerEvent.TIMER, this.addCoin, this);
+		this.floatCoinTimer.removeEventListener(egret.TimerEvent.TIMER, this.floatCoin, this);
+		this.rewardTimer.removeEventListener(egret.TimerEvent.TIMER_COMPLETE, this.addReward, this);
+		this.helpHandleTimer.removeEventListener(egret.TimerEvent.TIMER_COMPLETE, this.addHelpHandle, this);
+        
+        this.timer.stop();
+        this.coinTimer.stop();
+        this.floatCoinTimer.stop();
+		this.helpHandleTimer.stop();
+		this.rewardTimer.stop();
     }
 
 	private _rewardShareIcon:egret.Bitmap;
@@ -995,21 +1010,33 @@ class ElementViewManage extends egret.EventDispatcher {
 	 */
 	private numZero(num:any):string{
 		// //console.log("数字去0计算"+num);
-		let numString:string;
-		if(typeof(num) == "number"){
-			numString = Math.floor(num).toString();
-		}else{
-			// numString = num.split(".")[0];
-			numString = num;
+		try {
+			let numString:string;
+			if(typeof(num) == "number"){
+				numString = Math.floor(num).toString();
+			}else if (typeof(num) == "string"){
+				// numString = num.split(".")[0];
+				numString = num;
+			}
+			
+			let numLength:number = numString.length;
+			if (!numString)
+				throw "numString is null or undefined";
+			let zeroNumber:number = Math.floor( (numLength-1) / 3);
+			if (zeroNumber > 0){
+				
+					numString = numString.slice(0,-1*zeroNumber*3) + "."+numString.slice(numLength-zeroNumber*3,numLength-zeroNumber*3+2)+ GameData.zeroConfigArr[zeroNumber - 1].company;
+					if(typeof(zeroNumber) != "number")
+						throw "zeroNumber not a Number";
+					if(!zeroNumber)
+						throw "zeroNumber undefined or null";		
+			}else{
+				numString = num.toString();
+			}
+			return numString;
+		}catch(e){
+			console.log(e);
 		}
-		let numLength:number = numString.length;
-		let zeroNumber:number = Math.floor( (numLength-1) / 3);
-		if (zeroNumber > 0){
-				numString = numString.slice(0,-1*zeroNumber*3) + "."+numString.slice(numLength-zeroNumber*3,numLength-zeroNumber*3+2)+ GameData.zeroConfigArr[zeroNumber - 1].company;		
-		}else{
-			numString = num.toString();
-		}
-		return numString;
 	}
 
 	/**	
@@ -1017,21 +1044,31 @@ class ElementViewManage extends egret.EventDispatcher {
 	 */
 	private numZero2(num:any):string{
 		// //console.log("数字去0计算"+num);
-		let numString:string;
-		if(typeof(num) == "number"){
-			numString = Math.floor(num).toString();
-		}else{
-			// numString = num.split(".")[0];
-			numString = num;
+		try {
+			let numString:string;
+			if(typeof(num) == "number"){
+				numString = Math.floor(num).toString();
+			}else{
+				// numString = num.split(".")[0];
+				numString = num;
+			}
+			let numLength:number = numString.length;
+			if (!numString)
+				throw "numString is null or undefined";
+			let zeroNumber:number = Math.floor( (numLength-1) / 3);
+			if (zeroNumber > 0){
+					numString = numString.slice(0,-1*zeroNumber*3) + GameData.zeroConfigArr[zeroNumber - 1].company;
+					if(typeof(zeroNumber) != "number")
+						throw "zeroNumber not a Number";
+					if(!zeroNumber)
+						throw "zeroNumber undefined or null";			
+			}else{
+				numString = Math.round(num).toString();
+			}
+			return numString;
+		}catch(e){
+			console.log(e);
 		}
-		let numLength:number = numString.length;
-		let zeroNumber:number = Math.floor( (numLength-1) / 3);
-		if (zeroNumber > 0){
-				numString = numString.slice(0,-1*zeroNumber*3) + GameData.zeroConfigArr[zeroNumber - 1].company;		
-		}else{
-			numString = Math.round(num).toString();
-		}
-		return numString;
 	}
 
 	/**
@@ -1039,17 +1076,26 @@ class ElementViewManage extends egret.EventDispatcher {
 	 * author:bigfootzq
 	 * date:2018/09/11
 	 */
-	private addSecCoin():string {
+	private addSecCoin():string {	
 		let secTotalcoin:string = '0';
 		//遍历GameData.elements[],对每个等级的房子乘以秒产，每秒刷新一次
-		for(let l:number = 0;l < this.elementViews.length; l++){
-			if(this.elementViews[l].grade != 0){
-				// let houseSecCoin:number = houseDownArr[this.elementViews[l].grade-1].coin_num * Math.pow(10,houseDownArr[this.elementViews[l].grade-1].coin_Base);
-				let houseSecCoin:string = GameData.houseDownArr[this.elementViews[l].grade-1].coin_num ;				
-				// secTotalcoin = CommonFuction.jia(secTotalcoin,CommonFuction.cheng(this.elementViews[l].grade.toString(),houseSecCoin));
-				secTotalcoin = CommonFuction.jia(secTotalcoin,houseSecCoin);
+		try {
+			for(let l:number = 0;l < this.elementViews.length; l++){	
+				if(Number(this.elementViews[l].grade) >= 1 && typeof(this.elementViews[l].grade) != "undefined"){
+					if(!this.elementViews[l].grade)
+						throw "this.elementViews[l].grade undefined or null";
+					if(!GameData.houseDownArr[Number(this.elementViews[l].grade)-1])
+						throw "GameData.houseDownArr[Number(this.elementViews[l].grade)-1] undefined or null";
+					let houseSecCoin:string = GameData.houseDownArr[Number(this.elementViews[l].grade)-1].coin_num ;				
+					// secTotalcoin = CommonFuction.jia(secTotalcoin,CommonFuction.cheng(this.elementViews[l].grade.toString(),houseSecCoin));
+					secTotalcoin = CommonFuction.jia(secTotalcoin,houseSecCoin);
+				}
 			}
+		
+		}catch(e){
+			console.log(e);
 		}
+		
 		// //console.log("每秒增加金币："+secTotalcoin );
 		// if (CommonFuction.compareMax(secTotalcoin,GameData.secCoin)){
 		// 	GameData.secCoin = secTotalcoin
@@ -1067,38 +1113,43 @@ class ElementViewManage extends egret.EventDispatcher {
 			if(this.elementViews[l].time != 0 && this.elementViews[l].grade > 0){
 				// //console.log("飘字 : ");
 				// //console.log(this.elementViews[l].grade-1);
-				let houseSecCoin:string = GameData.houseDownArr[this.elementViews[l].grade-1].coin_num ;
-				// let houseSecCoin:number = houseDownArr[this.elementViews[l].grade-1].coin_num * Math.pow(10,houseDownArr[this.elementViews[l].grade-1].coin_Base);
-				let curretTime = new Date().getTime();
-				let timeDiffrent = Math.floor((curretTime - this.elementViews[l].time)/1000);
-				// //console.log("curretTime : "+ curretTime );
-				// //console.log("thisTime : "+ this.elementViews[l].time);
-				// //console.log("timeDiffrent : "+ timeDiffrent );
-				// //console.log(houseDownArr[this.elementViews[l].grade-1].coin_time);
-				// //console.log("求余 : ");
-				// //console.log(Number(timeDiffrent) % Number(houseDownArr[this.elementViews[l].grade-1].coin_time*2) );
-				let speed:number;
-				let index:number = 1;
-				if(GameBackGround.hTimerStatus){
-					speed = 160;
-					index = 5;
-				}else{
-					speed = 800;
-					index = 1
-					this.plusIndex = 1;
-				}
-				if ( Number(timeDiffrent) % Number(GameData.houseDownArr[this.elementViews[l].grade-1].coin_time*2) == 0 && this._isDeleteOver){
-					// console.log("飘出金币")
-					
-					this.plusIndex--;
-					// console.log(this.plusIndex);
-					if (this.plusIndex == 0){
-						this.elementViews[l].playScale();
-						SoundUtils.instance().playHouseCoinSound();
-						this.plusIndex = index;
+				try{
+					let houseSecCoin:string = GameData.houseDownArr[this.elementViews[l].grade-1].coin_num ;
+					// let houseSecCoin:number = houseDownArr[this.elementViews[l].grade-1].coin_num * Math.pow(10,houseDownArr[this.elementViews[l].grade-1].coin_Base);
+					let curretTime = new Date().getTime();
+					let timeDiffrent = Math.floor((curretTime - this.elementViews[l].time)/1000);
+					// //console.log("curretTime : "+ curretTime );
+					// //console.log("thisTime : "+ this.elementViews[l].time);
+					// //console.log("timeDiffrent : "+ timeDiffrent );
+					// //console.log(houseDownArr[this.elementViews[l].grade-1].coin_time);
+					// //console.log("求余 : ");
+					// //console.log(Number(timeDiffrent) % Number(houseDownArr[this.elementViews[l].grade-1].coin_time*2) );
+					let speed:number;
+					let index:number = 1;
+					if(GameBackGround.hTimerStatus){
+						speed = 160;
+						index = 5;
+					}else{
+						speed = 800;
+						index = 1
+						this.plusIndex = 1;
 					}
-					this.floatCoinText(this.numZero2(houseSecCoin),this.elementViews[l].targetX() -15,this.elementViews[l].targetY()-15,speed);
+					if ( Number(timeDiffrent) % Number(GameData.houseDownArr[this.elementViews[l].grade-1].coin_time*2) == 0 && this._isDeleteOver){
+						// console.log("飘出金币")
+						
+						this.plusIndex--;
+						// console.log(this.plusIndex);
+						if (this.plusIndex == 0){
+							this.elementViews[l].playScale();
+							SoundUtils.instance().playHouseCoinSound();
+							this.plusIndex = index;
+						}
+						this.floatCoinText(this.numZero2(houseSecCoin),this.elementViews[l].targetX() -15,this.elementViews[l].targetY()-15,speed);
+					}
+				}catch(e){
+					console.log(e);
 				}
+				
 			}
 		}
 	}
@@ -1279,9 +1330,20 @@ class ElementViewManage extends egret.EventDispatcher {
 	private tempExp:number = 0;
 	public addLevelExp(grade:number){
 		let levelExp:number = 0;
-		if (grade >= 1){
-			levelExp = GameData.houseDownArr[grade - 1].down_exp;
+		try{
+			if (Number(grade) >= 1){
+				levelExp = GameData.houseDownArr[Number(grade) - 1].down_exp;
+			}
+			if (!GameData.houseDownArr[Number(grade) - 1])
+				throw "GameData.houseDownArr[Number(grade) - 1] is null or undefined";
+			if (!grade)
+				throw "grade is null or undefined";
+			if (typeof(grade) =="string")
+				throw "grade is string"
+		}catch(e){
+			console.log(e);
 		}
+		
 
 		GameData.levelExp += Number(levelExp);
 		this._levelExpLabel.text = GameData.levelExp.toString() +"/"+GameData.levelReqExp.toString();
@@ -1295,6 +1357,7 @@ class ElementViewManage extends egret.EventDispatcher {
 			this.tempExp = 0;
 		}
 		if(GameData.levelExp >= GameData.levelReqExp && !GameData.newHouse){
+			this.timerStop();
 			let evt:ElementViewManageEvent = new ElementViewManageEvent(ElementViewManageEvent.LEVEL_EXP_UP);
 			this.levelExpUp(evt);
 		}
@@ -1420,183 +1483,8 @@ class ElementViewManage extends egret.EventDispatcher {
 	
 
 	/**-------------------------------------------------------房子回收--------------------------------------------------------------------------------- */
-	
-	private recycle:egret.Shape = new egret.Shape();
-	private createRecycle(){
-		//console.log("添加回收站");
-		this.recycle.width = GameData.girdWidth*0.6 + 5;
-		this.recycle.height = GameData.girdWidth*0.708 + 5;
-		let x = GameData.stageW - 10 -this.recycle.width*3/2 -5;
-		let y = GameData.stageH - this.recycle.height -GameData.girdWidth*1.21 -15;
-		this.recycle.graphics.beginFill(0x000000, 0);
-       	// this.recycle.graphics.drawRect(this.recycle.x,this.recycle.y,this.recycle.width,this.recycle.height);
-       	this.recycle.graphics.drawRect(x,y,this.recycle.width,this.recycle.height);
-      	this.recycle.graphics.endFill();
-		this._layer.addChild(this.recycle);
-	}
 
-	/**
-	 * 打开确认删除面板
-	 */
-	private _confirmRecycleContainer:egret.Sprite = new egret.Sprite();
-	private _confirmBtn:egret.Bitmap = new egret.Bitmap();
-	private _reclaimCheck:egret.Bitmap = ResourceUtils.createBitmapByName("reclaim_check_png");
-	private _isDelete:boolean = false;
-	private _isDisableConfirm:boolean = false;//是否禁止弹出回收面板
-	private openConfirmRecycle(){
-		this.timer.stop();
-		this.floatCoinTimer.stop();
-        SoundUtils.instance().playClickSound();
-		this._layer.addChild(this._confirmRecycleContainer);
-        
-        let confirmBase:egret.Bitmap = ResourceUtils.createBitmapByName("reclaim_base_png");
-        confirmBase.x =  GameData.stageW/2 - confirmBase.width/2;
-        confirmBase.y =  GameData.stageH/2 - confirmBase.height/2;
-
-        let confirmMask = new egret.Shape();
-        confirmMask.graphics.beginFill(0x000000, 0.8);
-        confirmMask.graphics.drawRect(0,0,GameData.stageW,GameData.stageH);
-        confirmMask.graphics.endFill();
-        confirmMask.alpha = 0.8;
-        this._confirmRecycleContainer.addChild(confirmMask);
-        this._confirmRecycleContainer.addChild(confirmBase);
-
-		let grade = this._hitEv.grade;
-		let newHouse:egret.Bitmap = ResourceUtils.createBitmapByName("house#houses_a_"+this.addPreZero(grade)+"_big" )
-		newHouse.x = confirmBase.x + confirmBase.width/2 - newHouse.width/2;
-		newHouse.y = confirmBase.y + GameData.stageW/10;
-		 //房子等级
-		let houseLevelLabel:egret.TextField =new egret.TextField();
-		houseLevelLabel.text = "LV " + grade.toString();
-		houseLevelLabel.textAlign = egret.HorizontalAlign.CENTER;
-		houseLevelLabel.fontFamily = "黑体";
-		houseLevelLabel.size = 20;
-		houseLevelLabel.textColor = 0X7D3705;
-		houseLevelLabel.width =  newHouse.width;
-		houseLevelLabel.x = newHouse.x;
-		houseLevelLabel.y = newHouse.y + newHouse.height + 15;
-
-		this._confirmRecycleContainer.addChild(newHouse);
-		this._confirmRecycleContainer.addChild(houseLevelLabel);
-		//房子价格
-		let newHouseCoin:egret.Bitmap  = ResourceUtils.createBitmapByName("shop#shop_money_01_png");
-		newHouseCoin.x = confirmBase.x + confirmBase.width/4 + 18;
-		newHouseCoin.y = houseLevelLabel.y + houseLevelLabel.height + 25;
-		let housePriceLabel:egret.TextField =new egret.TextField();
-		// let housePrice:number =  this._buyHouseConfigArray[this._hitEv.grade-1].coinNum * Math.pow(10, this._buyHouseConfigArray[this._hitEv.grade-1].coinBase);
-		// let housePrice:number =  Number(this._buyHouseConfigArray[this._hitEv.grade-1].coinNum);
-		let housePrice:string =  GameData.buyHouseConfigArray[this._hitEv.grade-1].coinNum;
-
-		housePriceLabel.text = this.numZero(housePrice);
-		housePriceLabel.textAlign = egret.HorizontalAlign.CENTER;
-		housePriceLabel.size = 20;
-		housePriceLabel.fontFamily = "黑体";
-		housePriceLabel.width =  newHouse.width;
-		housePriceLabel.height = newHouseCoin.height
-		housePriceLabel.x = houseLevelLabel.x ;
-		housePriceLabel.y = newHouseCoin.y + 4;
-
-		this._confirmRecycleContainer.addChild(newHouseCoin);
-		this._confirmRecycleContainer.addChild(housePriceLabel);
-
-
-        this._confirmBtn = ResourceUtils.createBitmapByName("reclaim_sure_png");
-        this._confirmBtn.touchEnabled = true;
-		this._confirmBtn.x = confirmBase.x + (confirmBase.width/2-this._confirmBtn.width)/2;
-        this._confirmBtn.y = confirmBase.y + confirmBase.height*3/4 - 20;
-
-		let closeBtn = ResourceUtils.createBitmapByName("reclaim_cancel_png");
-        closeBtn.touchEnabled = true;
-		closeBtn.x = confirmBase.x + confirmBase.width/2 + (confirmBase.width/2-closeBtn.width)/2;
-        closeBtn.y = confirmBase.y + confirmBase.height*3/4 - 20;
-
-        this._confirmRecycleContainer.addChild(this._confirmBtn);
-        this._confirmRecycleContainer.addChild(closeBtn);
-		this._confirmBtn.addEventListener(egret.TouchEvent.TOUCH_TAP,this.confirm,this);
-        closeBtn.addEventListener(egret.TouchEvent.TOUCH_TAP,this.closeConfirmRecycle,this);
-
-		let disableConfirm = new egret.Shape();
-        disableConfirm.graphics.beginFill(0x000000, 0);
-        disableConfirm.graphics.drawRect(confirmBase.x + confirmBase.width/5,confirmBase.y + confirmBase.height*0.85 ,60,25);
-        disableConfirm.graphics.endFill();
-		disableConfirm.touchEnabled = true;
-		disableConfirm.addEventListener(egret.TouchEvent.TOUCH_TAP,this.disableConfirm,this);
-		this._confirmRecycleContainer.addChild(disableConfirm);
-
-		this._reclaimCheck.x = confirmBase.x + confirmBase.width/5 + 5;
-		this._reclaimCheck.y = confirmBase.y + confirmBase.height*0.85;
-	}
-
-	/**
-	 * 关闭确认删除面板
-	 */
-	private closeConfirmRecycle(){
-		//console.log("关闭删除面板");
-		this.timer.start();
-		this.floatCoinTimer.start();
-        SoundUtils.instance().playCloseSound();
-		while(this._confirmRecycleContainer.numChildren){
-            this._confirmRecycleContainer.removeChildAt(0);
-        }
-        this._layer.removeChild(this._confirmRecycleContainer);
-		this._hitEv.back();
-	}
-	
-	private confirm(){
-		//console.log("确认删除")
-		let x = GameData.stageW - 10 -this.recycle.width -5;
-		let y = GameData.stageH - this.recycle.height/2 -GameData.girdWidth*1.21 -15;
-		this.deleteElement(this._hitEv.id,x,y);
-		let housePrice:string =  GameData.buyHouseConfigArray[this._hitEv.grade].coinNum;
-		// let housePrice:number =  this._buyHouseConfigArray[this._hitEv.grade].coinNum * Math.pow(10, this._buyHouseConfigArray[this._hitEv.grade].coinBase);
-		// GameData.coin += Number(housePrice);
-		GameData.coin = CommonFuction.jia(GameData.coin.toString,housePrice);
-		this._coinLabel.text = this.numZero(GameData.coin);
-		this.closeConfirmRecycle();
-	}
-	
-	private disableConfirm(){
-		if(!this._isDisableConfirm){
-			this._confirmRecycleContainer.addChild(this._reclaimCheck);
-			this._isDisableConfirm = true;
-		}else{
-			if(this._reclaimCheck.parent){
-				this._reclaimCheck.parent.removeChild(this._reclaimCheck);
-				this._isDisableConfirm = false;
-			}
-		}
-	}
 	private _hitEv  = new ElementView(this._layer);
-	/***
-	 * 删除房子
-	 * author:bigfootzq
-	 * date:2018/11/22
-	 */
-	private recycleHouse(evt:egret.TouchEvent){
-		this._hitEv = <ElementView>evt.currentTarget;
-		let isHit:boolean = this.recycle.hitTestPoint(evt.stageX,evt.stageY);
-		//console.log("删除碰撞检测"+isHit);
-		if(isHit){
-			//console.log("删除元素");
-			if(this._isDisableConfirm){
-				//console.log("直接删除元素");
-				this.deleteElement(this._hitEv.id,evt.stageX,evt.stageY);
-				// let housePrice:number =  this._buyHouseConfigArray[this._hitEv.grade].coinNum * Math.pow(10, this._buyHouseConfigArray[this._hitEv.grade].coinBase);
-				let housePrice:string =  GameData.buyHouseConfigArray[this._hitEv.grade].coinNum;
-				GameData.coin = CommonFuction.jia(GameData.coin,housePrice);
-				this._coinLabel.text = this.numZero(GameData.coin);
-			}else{
-				this.openConfirmRecycle();
-				let x = GameData.stageW - 10 -this.recycle.width -5;
-				let y = GameData.stageH - this.recycle.height/2 -GameData.girdWidth*1.21 -15;
-				this._hitEv.moveTo(x,y);
-			}
-
-		}else{
-			this._hitEv.back();
-		}
-	}
-
 	/***
 	 * 新版删除房子
 	 * author:bigfootzq
@@ -1612,19 +1500,17 @@ class ElementViewManage extends egret.EventDispatcher {
 		//必须加上方块所在的x，y
 		rectA.x += this._hitEv.x;
 		rectA.y += this._hitEv.y;
-		// rectB.x += x;
-		// rectB.y += y;
-		// let isHit:boolean = ev1.hitTestPoint(ev2.targetX(),ev2.targetY());
 		let isHit:boolean = rectA.intersects(rectB)
 		//console.log("删除碰撞检测"+isHit);
 		if(isHit){			
 			//console.log("直接删除元素");
-			// console.log(this._hitEv);
-			// console.log(this._hitEv.id);
-			// console.log(GameData.elements[this._hitEv.id].grade);
-			// let housePrice:number =  this._buyHouseConfigArray[this._hitEv.grade].coinNum * Math.pow(10, this._buyHouseConfigArray[this._hitEv.grade].coinBase);
-			let housePrice:string =  GameData.buyHouseConfigArray[this._hitEv.grade-1].sellcoefficient;
-			GameData.coin = CommonFuction.jia(GameData.coin,housePrice);
+			try{
+				let housePrice:string =  GameData.buyHouseConfigArray[this._hitEv.grade-1].sellcoefficient;
+				GameData.coin = CommonFuction.jia(GameData.coin,housePrice);
+			}catch(e){
+				console.log(e);
+			}
+			
 			this.delfloatCoinText(this._hitEv.x,this._hitEv.y,this._hitEv.grade);
 			this._coinLabel.text = this.numZero(GameData.coin);
 			this.deleteElement(this._hitEv.id,this._hitEv.x,this._hitEv.y);
@@ -1655,8 +1541,7 @@ class ElementViewManage extends egret.EventDispatcher {
 				if(!this.helpHandleTimer.running){
 					this.helpHandleTimer.reset();
 					this.helpHandleTimer.start();
-				}
-				
+				}	
 			}
 			else{
 				GameData.mapData[i][t] = -2 //删除元素后把这块格子置为-2,表示无元素
@@ -1669,7 +1554,12 @@ class ElementViewManage extends egret.EventDispatcher {
 	 */
 	private delfloatCoinText(x:number,y:number,grade:number){
 		// console.log("删除房屋金币飘字");
-		let housePrice:string =  GameData.buyHouseConfigArray[grade-1].sellcoefficient;	
+		let housePrice:string
+		try{
+			 housePrice =  GameData.buyHouseConfigArray[grade-1].sellcoefficient;	
+		}catch(e){
+			console.log(e);
+		}
 		let coinView = ResourceUtils.createBitmapByName("shop#shop_money_01_png");
 		coinView.x = x;
 		coinView.y = y;
@@ -1780,7 +1670,12 @@ class ElementViewManage extends egret.EventDispatcher {
         cards.height = GameData.stageW*0.375;
 		// cards.cacheAsBitmap = true;
         // cards.width = GameData.stageW*2.5;//不定义滚动卡片的宽度
-        this.availableHouseLevel = GameData.availableBuyHouseArr[GameData.maxHouseGrade-1].availableLevel;
+		try{
+      	  	this.availableHouseLevel = GameData.availableBuyHouseArr[GameData.maxHouseGrade-1].availableLevel;
+		}
+		catch(e){
+			console.log(e);
+		}
         // //console.log( this._buyHouseConfigArray);
         // //console.log(availableHouseLevel);
         // //console.log(GameData.maxHouseGrade);
@@ -1795,14 +1690,19 @@ class ElementViewManage extends egret.EventDispatcher {
            	this._housePriceLabel = new egret.TextField();
 			// let housePrice:number =   this._buyHouseConfigArray[i].coinNum * Math.pow(10, this._buyHouseConfigArray[i].coinBase) * (1+ this._buyHouseConfigArray[i].buff*GameData.houseBuyNumber[i]/10000); 
 			let housePrice:string = '0';
-			if (GameData.houseBuyNumber[i] < GameData.buyHouseConfigArray[i].additionmax){
+			try{
+				if (GameData.houseBuyNumber[i] < GameData.buyHouseConfigArray[i].additionmax){
 				//  housePrice =  Number(this._buyHouseConfigArray[i].coinNum)  + this._buyHouseConfigArray[i].addition * GameData.houseBuyNumber[i];
 				 housePrice = CommonFuction.jia(GameData.buyHouseConfigArray[i].coinNum, CommonFuction.cheng(GameData.buyHouseConfigArray[i].addition , GameData.houseBuyNumber[i].toString()));
-			}else{
-				// housePrice =  Number(this._buyHouseConfigArray[i].coinNum)  + this._buyHouseConfigArray[i].additionmax * GameData.houseBuyNumber[i];	
-				housePrice = CommonFuction.jia(GameData.buyHouseConfigArray[i].coinNum, CommonFuction.cheng(GameData.buyHouseConfigArray[i].addition , GameData.buyHouseConfigArray[i].additionmax));
-							
+				}else{
+					// housePrice =  Number(this._buyHouseConfigArray[i].coinNum)  + this._buyHouseConfigArray[i].additionmax * GameData.houseBuyNumber[i];	
+					housePrice = CommonFuction.jia(GameData.buyHouseConfigArray[i].coinNum, CommonFuction.cheng(GameData.buyHouseConfigArray[i].addition , GameData.buyHouseConfigArray[i].additionmax));
+								
+				}
+			}catch(e){
+				console.log(e);
 			}
+			
           	//  //console.log(housePrice);
 		    let buyBtn:egret.Bitmap = ResourceUtils.createBitmapByName("shop#shop_buy_02_png");
             let buyBtnCoin:egret.Bitmap = ResourceUtils.createBitmapByName("shop#shop_money_02_png");
@@ -1813,7 +1713,11 @@ class ElementViewManage extends egret.EventDispatcher {
             // this._shopCardArr.push(buyBtnView);
             if( houseLevel <= this.availableHouseLevel){
                 shopHouse = ResourceUtils.createBitmapByName("house#houses_a_"+this.addPreZero(houseLevel)+"_big" );
-				houseNameLabel.text = GameData.availableBuyHouseArr[i].housename;
+				try{
+					houseNameLabel.text = GameData.availableBuyHouseArr[i].housename;
+				}catch(e){
+					console.log(e);
+				}
 				if (CommonFuction.compareMax(GameData.coin,housePrice)){ 			
                     // buyBtn = ResourceUtils.createBitmapByName("shop_buy_01_png");
                     this.buyBtnView.bitmap.texture = RES.getRes("shop#shop_buy_01_png");
@@ -1827,7 +1731,7 @@ class ElementViewManage extends egret.EventDispatcher {
                     this._housePriceLabel.textColor = 0X333333;
                 }
             }else{
-                shopHouse = ResourceUtils.createBitmapByName("house#houses_a_"+this.addPreZero(houseLevel)+"_black" ); 
+                shopHouse = ResourceUtils.createBitmapByName("house_black#houses_a_"+this.addPreZero(houseLevel)+"_black" ); 
                 buyBtn = ResourceUtils.createBitmapByName("shop#shop_buy_02_png");
                 houseNameLabel.text = "???";
             }
@@ -1904,25 +1808,12 @@ class ElementViewManage extends egret.EventDispatcher {
                 cards.addChild(buyBtn);
                 cards.addChild(shopBuyLock);
             }
-
-            // if ( this.availableHouseLevel >= 2 && i == this.availableHouseLevel-1 && this._addReward){
-            //     this._rewardShare = ResourceUtils.createBitmapByName("shop#shop_reward_share_png");
-            //     this._rewardShare.touchEnabled = true;
-            //     // this._rewardShare.width = shopCard.width*3/5;
-            //     this._rewardShare.width = buyBtn.width
-            //     // this._rewardShare.x = 20+ (10+shopCard.width)*(this.availableHouseLevel-2) + (shopCard.width - this._rewardShare.width)/2;
-            //   	// this._rewardShare.y = shopCard.y - this._rewardShare.height/2;
-            //   	this._rewardShare.x = buyBtn.x;
-            //   	this._rewardShare.y = buyBtn.y;
-            //     cards.addChildAt(this._rewardShare,cards.numChildren); 
-            //     this._rewardShare.addEventListener(egret.TouchEvent.TOUCH_TAP,this.rewardShare,this);
-            // }
 			
 			
             if ( this.availableHouseLevel >= 1 && i == this.availableHouseLevel-1 &&this._addReward){
-				console.log("免费视频图标");
-				console.log(i);
-				console.log(this._rewardShare);
+				// console.log("免费视频图标");
+				// console.log(i);
+				// console.log(this._rewardShare);
 				
 				if(GameData.getVideoAd){
 					this._rewardShare.texture =  RES.getRes("shop#shop_reward_video_png");
@@ -1941,16 +1832,6 @@ class ElementViewManage extends egret.EventDispatcher {
                 cards.addChildAt(this._rewardShare,cards.numChildren); 
                 
             }
-            // if (i == 1){
-            //     let rewardVideo:egret.Bitmap = ResourceUtils.createBitmapByName("shop_reward_video_png");
-            //     rewardVideo.touchEnabled = true;
-            //     rewardVideo.width = shopCard.width*3/5;
-            //     rewardVideo.x = 20+ shopCard.width + 20 +(shopCard.width - rewardVideo.width)/2 ;
-            //     rewardVideo.y = shopCard.y - rewardVideo.height/2
-            //     cards.addChild(rewardVideo);
-            //     rewardVideo.addEventListener(egret.TouchEvent.TOUCH_TAP,this.rewardVedio,this);
-                
-            // }
             
             
         }
@@ -1961,13 +1842,16 @@ class ElementViewManage extends egret.EventDispatcher {
         //console.log("购买房屋");     
         let newHouse = <ShopCardView>evt.currentTarget;
 		let housePrice:string = '0';
-		if (GameData.houseBuyNumber[newHouse.houseLevel-1] < GameData.buyHouseConfigArray[newHouse.houseLevel-1].additionmax){
-			//  housePrice =  Number(this._buyHouseConfigArray[i].coinNum)  + this._buyHouseConfigArray[i].addition * GameData.houseBuyNumber[i];
-			housePrice = CommonFuction.jia(GameData.buyHouseConfigArray[newHouse.houseLevel-1].coinNum, CommonFuction.cheng(GameData.buyHouseConfigArray[newHouse.houseLevel-1].addition , GameData.houseBuyNumber[newHouse.houseLevel-1].toString()));
-		}else{
-			// housePrice =  Number(this._buyHouseConfigArray[i].coinNum)  + this._buyHouseConfigArray[i].additionmax * GameData.houseBuyNumber[i];	
-			housePrice = CommonFuction.jia(GameData.buyHouseConfigArray[newHouse.houseLevel-1].coinNum, CommonFuction.cheng(GameData.buyHouseConfigArray[newHouse.houseLevel-1].addition , GameData.buyHouseConfigArray[newHouse.houseLevel-1].additionmax));				
+		try{
+			if (GameData.houseBuyNumber[newHouse.houseLevel-1] < GameData.buyHouseConfigArray[newHouse.houseLevel-1].additionmax){
+				housePrice = CommonFuction.jia(GameData.buyHouseConfigArray[newHouse.houseLevel-1].coinNum, CommonFuction.cheng(GameData.buyHouseConfigArray[newHouse.houseLevel-1].addition , GameData.houseBuyNumber[newHouse.houseLevel-1].toString()));
+			}else{
+				housePrice = CommonFuction.jia(GameData.buyHouseConfigArray[newHouse.houseLevel-1].coinNum, CommonFuction.cheng(GameData.buyHouseConfigArray[newHouse.houseLevel-1].addition , GameData.buyHouseConfigArray[newHouse.houseLevel-1].additionmax));				
+			}
+		}catch(e){
+				console.log(e);
 		}
+		
 		if( CommonFuction.compareMax(GameData.coin,housePrice) ){
 			for(let l:number = 0;l<GameData.availableMapId.length;l++){
 				let id:number = GameData.availableMapId[l];
@@ -2017,13 +1901,18 @@ class ElementViewManage extends egret.EventDispatcher {
 				// }else{
 				// 	housePrice =  Number(this._buyHouseConfigArray[newHouse.houseLevel-1].coinNum  + this._buyHouseConfigArray[newHouse.houseLevel-1].additionmax * GameData.houseBuyNumber[newHouse.houseLevel-1]);				
 				// }
-				if (GameData.houseBuyNumber[newHouse.houseLevel-1] <GameData.buyHouseConfigArray[newHouse.houseLevel-1].additionmax){
+				try{
+					if (GameData.houseBuyNumber[newHouse.houseLevel-1] <GameData.buyHouseConfigArray[newHouse.houseLevel-1].additionmax){
 					//  housePrice =  Number(this._buyHouseConfigArray[i].coinNum)  + this._buyHouseConfigArray[i].addition * GameData.houseBuyNumber[i];
-					housePrice = CommonFuction.jia(GameData.buyHouseConfigArray[newHouse.houseLevel-1].coinNum, CommonFuction.cheng(GameData.buyHouseConfigArray[newHouse.houseLevel-1].addition , GameData.houseBuyNumber[newHouse.houseLevel-1].toString()));
-				}else{
-					// housePrice =  Number(this._buyHouseConfigArray[i].coinNum)  + this._buyHouseConfigArray[i].additionmax * GameData.houseBuyNumber[i];	
-					housePrice = CommonFuction.jia(GameData.buyHouseConfigArray[newHouse.houseLevel-1].coinNum, CommonFuction.cheng(GameData.buyHouseConfigArray[newHouse.houseLevel-1].addition , GameData.buyHouseConfigArray[newHouse.houseLevel-1].additionmax));				
+						housePrice = CommonFuction.jia(GameData.buyHouseConfigArray[newHouse.houseLevel-1].coinNum, CommonFuction.cheng(GameData.buyHouseConfigArray[newHouse.houseLevel-1].addition , GameData.houseBuyNumber[newHouse.houseLevel-1].toString()));
+					}else{
+						// housePrice =  Number(this._buyHouseConfigArray[i].coinNum)  + this._buyHouseConfigArray[i].additionmax * GameData.houseBuyNumber[i];	
+						housePrice = CommonFuction.jia(GameData.buyHouseConfigArray[newHouse.houseLevel-1].coinNum, CommonFuction.cheng(GameData.buyHouseConfigArray[newHouse.houseLevel-1].addition , GameData.buyHouseConfigArray[newHouse.houseLevel-1].additionmax));				
+					}
+				}catch(e){
+						console.log(e);
 				}
+				
 				// //console.log("购买房屋:"+ housePrice);
 				this._housePriceLabelArr[newHouse.houseLevel-1].text = this.numZero(housePrice);
 				// GameData.coin -= Number(newHouse.housePrcice);
@@ -2054,7 +1943,7 @@ class ElementViewManage extends egret.EventDispatcher {
     }
 	private getVideoAd(){
 		console.log("拉取视频广告");
-		this.rewardedVideoAd = platform.createRewardedVideoAd();
+		this.rewardedVideoAd = platform.createRewardedVideoAd('adunit-0fb861fe7b1ca7fe');
 		this.rewardedVideoAd.onLoad(() => {
 			console.log("拉取成功");
 			GameData.getVideoAd = true;
@@ -2116,7 +2005,13 @@ class ElementViewManage extends egret.EventDispatcher {
 			let ele:ElementView = this.elementViews[id];
 			GameData.mapData[i][t] = id;
 			ele.grade = 0;
-			GameData.elements[id].grade = GameData.availableBuyHouseArr[GameData.maxHouseGrade-1].availableLevel;
+			try{
+				GameData.elements[id].grade = GameData.availableBuyHouseArr[GameData.maxHouseGrade-1].availableLevel;
+			}
+			catch(e){
+				console.log(e);
+			}
+			
             ele.location = GameData.elements[id].location;
             GameData.elements[id].type = "b1";
             ele.setTexture( "ui_box_gift_png" );

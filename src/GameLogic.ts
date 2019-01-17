@@ -21,10 +21,13 @@ class GameLogic {
 	private _returnGame:boolean  = true;//返回游戏
 	public static closeShare:boolean;
 	public static guide:boolean;//新手引导
-	public static version:string = "1.13.1";//新手引导
+	public static version:string = "1.14.1";//版本号
 	private init(){
 		GameData.initData();  //初始化数据
-		if (this._returnGame && !GameLogic.guide){
+		if(GameData.currentLevel == 1){
+			GameLogic.guide = true;//默认第一关true
+		}
+		if (this._returnGame){
 			this.loadOldData()
 		}
 		//console.log("当前关卡："+GameData.currentLevel);
@@ -54,11 +57,7 @@ class GameLogic {
 		if (GameData.currentLevel != 1 ){
 			this.setGbgShareTimer();
 			GameLogic.guide = false;
-		}else{
-			GameLogic.guide = true;//默认第一关true
 		}
-
-
 		
 		let lec:egret.Sprite = new egret.Sprite();
 		this._gameStage.addChild(lec);
@@ -76,12 +75,8 @@ class GameLogic {
 		SoundUtils.instance().initSound();
 		SoundUtils.instance().playBg();
 		//console.log("游戏场景初始化"+this._returnGame);
-		if(GameLogic.guide && GameData.currentLevel == 1 && GameData.availableMapId.length == 4){
-			this.evm.showElementById(0);
-			this.evm.showElementById(1);
-			this.gv = new GuideView();
-			this._gameStage.addChild( this.gv );
-			this.gv.guideFirst();	
+		if(GameLogic.guide && GameData.currentLevel == 1){
+			this.guideInit();
 		}else{
 			this.wrp = new WelcomeRetrunPanel();
 			if	(this._returnGame && GameData.coin != '0'){		
@@ -124,8 +119,6 @@ class GameLogic {
 		this.evm.addEventListener(ElementViewManageEvent.GUIDE_RESET,this.init,this);
 		
 	}
-	
-
 
 
 	/*------------------------------------------------------------------------------------------------*/
@@ -136,43 +129,45 @@ class GameLogic {
         let userGameData =  egret.localStorage.getItem("userGameData");
         if(userGameData){
 			 //console.log("读取旧数据成功")
-			this._hasOldData = true;
-            let oldData = JSON.parse(userGameData);
-			//console.log(oldData);
-            GameData.closeMusic = oldData.closeMusic?oldData.closeBgMusic:false;
-			GameData.closeBgMusic = oldData.closeBgMusic?oldData.closeBgMusic:false;
-			GameData.currentLevel = oldData.currentLevel;
-			GameData.levelExp = oldData.levelExp;
-			GameData.cost = oldData.cost;
-			GameData.coin = oldData.coin?oldData.coin:'0';
-			GameData.secCoin = oldData.secCoin;
-			this._due = oldData.due;
-            GameData.oldElements = oldData.inMap;
-			GameData.maxHouseGrade = oldData.maxHouseGrade?oldData.maxHouseGrade:1;
-			GameData.houseBuyNumber = oldData.buyHouseNumber;
-			GameData.elementTypeFirstShow = oldData.elementTypeFirstShow;
-			if(oldData.addRewrd){
-				this.evm.addReward();
+			try{
+				this._hasOldData = true;
+				let oldData = JSON.parse(userGameData);
+				//console.log(oldData);
+				GameData.closeMusic = oldData.closeMusic?oldData.closeBgMusic:false;
+				GameData.closeBgMusic = oldData.closeBgMusic?oldData.closeBgMusic:false;
+				GameData.currentLevel = oldData.currentLevel;
+				GameData.levelExp = oldData.levelExp;
+				GameData.cost = oldData.cost;
+				GameData.coin = oldData.coin?oldData.coin:'0';
+				GameData.secCoin = oldData.secCoin;
+				this._due = oldData.due;
+				GameData.oldElements = oldData.inMap;
+				GameData.maxHouseGrade = oldData.maxHouseGrade?oldData.maxHouseGrade:1;
+				GameData.houseBuyNumber = oldData.buyHouseNumber;
+				GameData.elementTypeFirstShow = oldData.elementTypeFirstShow;
+				GameLogic.guide = oldData.guide;
+				if(oldData.addRewrd){
+					this.evm.addReward();
+				}
+			}catch(e){
+				console.log(e);
 			}
+			
 			
         }else{
             //console.log("没有旧数据");
-			this._returnGame = false;           
+			this._returnGame = false;
+			this._hasOldData = false;           
         }
     }
 
 	private async onShow(){
 		//console.log("GameLogic进入游戏");
-		let wxData = platform.getLaunchOptionsSync();
-		//console.log(wxData);
-		if(wxData){
-			//console.log(wxData);
-			let userGameData = await platform.getGameData("userGameData");
-			//console.log("获取旧数据");
-			//console.log(userGameData);
-			let oldData = userGameData[0];
-			return oldData;
-		}
+		let userGameData = await platform.getGameData("userGameData");
+		//console.log("获取旧数据");
+		//console.log(userGameData);
+		let oldData = userGameData[0];
+		return oldData;
 	}
 
 	private nextLevelTest(evt:ElementViewManageEvent){
@@ -213,16 +208,38 @@ class GameLogic {
 
 	}
 	/*************************************************新手引导*************************************************************************************************** */
+	private guideInit(){
+				GameData.elements[0].type = "b";
+				GameData.elements[0].grade = 0;
+				GameData.elements[0].time = 0;
+				GameData.elements[1].type = "b";
+				GameData.elements[1].grade = 0;
+				GameData.elements[1].time = 0;
+				GameData.availableMapId = [0,1,2,3];
+				this.evm.showElementById(0);
+				this.evm.showElementById(1);
+				this.gv = new GuideView();
+				this._gameStage.addChild( this.gv );
+				this.gv.guideFirst();	
+	}
 	private guideStepTwo(){
 		// console.log('guideStepTwo监听事件成功');
-		this.gv && this.gv.clear()
-		this.gv && this.gv.guideTwo();
+		try{
+			this.gv && this.gv.clear()
+			this.gv && this.gv.guideTwo();
+		}catch(e){
+			console.log(e);
+		}
 	}
 
 	private guideStepThree(){
 		// console.log('guideStepThree监听事件成功');
-		this.gv && this.gv.clear()
-		this.gv && this.gv.guideThree();
+		try{
+			this.gv && this.gv.clear()
+			this.gv && this.gv.guideThree();
+		}catch(e){
+			console.log(e);
+		}
 	}
 
 	/**^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
@@ -345,6 +362,19 @@ class GameLogic {
 
 	private clear():void{
 		GameData.availableMapId = [];
+		this.evm.removeEventListener(ElementViewManageEvent.OPEN_NEW_HOUSE_PANEL,this.openNewHousePanel,this);
+		this.evm.removeEventListener(ElementViewManageEvent.GET_NEW_HOUSE_PROFIT,this.getNewHouseProfit,this);
+		this.nhp.removeEventListener(ElementViewManageEvent.CLOSE_NEW_HOUSE_PANEL,this.addLevelExp,this);
+		this.evm.removeEventListener(ElementViewManageEvent.LEVEL_EXP_UP,this.nextLevelTest,this);
+		this.evm.removeEventListener(ElementViewManageEvent.CLOSE_LEVEL_UP_PANEL,this.getLevelUpProfit,this);
+		this.evm.removeEventListener(ElementViewManageEvent.OPEN_SCENES,this.openScenes,this);
+		this.csp.removeEventListener(ElementViewManageEvent.CHANGE_SCENE,this.changeScene,this);
+		this.evm.removeEventListener(ElementViewManageEvent.GET_PROFIT,this.addProfit,this);
+		this.evm.removeEventListener(ElementViewManageEvent.X5_PROFIT,this.x5Profit,this);
+		this.evm.removeEventListener(ElementViewManageEvent.REWARD_HOUSE ,this.rewardHouse,this);
+		this.evm.removeEventListener(ElementViewManageEvent.GUIDE_STEP_TWO,this.guideStepTwo,this);
+		this.evm.removeEventListener(ElementViewManageEvent.GUIDE_STEP_THREE,this.guideStepThree,this);
+		this.evm.removeEventListener(ElementViewManageEvent.GUIDE_RESET,this.init,this);
         while(this._gameStage.numChildren){
             this._gameStage.removeChildAt(0);
         }

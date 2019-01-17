@@ -159,7 +159,7 @@ class LevelUpPanel  extends egret.Sprite
         let LevelUpCoin:egret.Bitmap  = ResourceUtils.createBitmapByName("ui_money_total_png");
 		LevelUpCoin.x = LevelUpProfitTextLabel.x + LevelUpProfitTextLabel.width +20;
 		LevelUpCoin.x = getBtn.x;
-        LevelUpCoin.y = LevelUpProfitTextLabel.y -(LevelUpCoin.height -LevelUpProfitTextLabel.height)/2;
+        LevelUpCoin.y = getBtn.y -LevelUpCoin.height - 50;
         // LevelUpCoin.width = LevelUpCoin.height =  LevelUpProfitTextLabel.height;
         this.addChild(LevelUpCoin);
 
@@ -174,32 +174,36 @@ class LevelUpPanel  extends egret.Sprite
         let LevelUpProfitLabel = new egret.TextField();
         LevelUpProfitLabel.text =  CommonFuction.numZero(this.levelUpProfit);
 		LevelUpProfitLabel.width = GameData.girdWidth*2;
-        LevelUpProfitLabel.height = GameData.girdWidth/3;
+        // LevelUpProfitLabel.height = GameData.girdWidth/3;
 		LevelUpProfitLabel.x = LevelUpCoin.x +LevelUpCoin.width +20;
-		LevelUpProfitLabel.y = getBtn.y -LevelUpProfitLabel.height - 28
+		LevelUpProfitLabel.y = LevelUpCoin.y;
 		LevelUpProfitLabel.fontFamily  = "黑体";
-		LevelUpProfitLabel.size = 35;
+		LevelUpProfitLabel.size = 48;
 		// LevelUpProfitLabel.textColor = 0xFFE974;
 		LevelUpProfitLabel.textColor = 0xFFFFFF;
 		LevelUpProfitLabel.textAlign = egret.HorizontalAlign.LEFT;
         this.addChild(LevelUpProfitLabel);
+        let closeBtn:egret.TextField =new egret.TextField();
         let waitTime:number = 0;
         if(!GameLogic.closeShare){
             this.addChild(getBtn)
+            closeBtn.y = getBtn.y + getBtn.height + 60;
             waitTime = 3000;
         }else{
-            waitTime = 500;
+            waitTime = 300;
+            closeBtn.y = LevelUpCoin.y +LevelUpCoin.height + 10;
         }
 
-		let closeBtn:egret.TextField =new egret.TextField();
+		
 		closeBtn.width = getBtn.width;
-		closeBtn.text = "跳过";
+		// closeBtn.text = "跳过";
 		closeBtn.textAlign = egret.HorizontalAlign.CENTER;
 		closeBtn.fontFamily = "黑体";
 		closeBtn.size = 36;
 		closeBtn.textColor = 0Xffffff;
 		closeBtn.x = getBtn.x;
-		closeBtn.y = getBtn.y + getBtn.height + 40;
+		closeBtn.textFlow = <Array<egret.ITextElement>>[{text:"跳过",style: {"underline": true}}]
+		
 		closeBtn.touchEnabled = true;
 		closeBtn.addEventListener(egret.TouchEvent.TOUCH_TAP,this.closePanel,this);
         this._idTimeout = egret.setTimeout(function(){
@@ -219,7 +223,7 @@ class LevelUpPanel  extends egret.Sprite
         // console.log(this.levelUpProfit);
         GameData.coin  = CommonFuction.jia(this.levelUpProfit,GameData.coin.toString());
         egret.localStorage.removeItem("luTime");
-        this.bannerAd.destroy();
+        
 	}
 
     public getProfitNum(){
@@ -233,7 +237,13 @@ class LevelUpPanel  extends egret.Sprite
 		while(this.numChildren){
             this.removeChildAt(0);
         }
-        this.bannerAd.destroy();
+        try{
+         this.bannerAd && this.bannerAd.destroy();
+         if(!this.bannerAd)
+            throw "bannerAd undifined";
+        }catch(e){
+            console.log(e);
+        }
 	}	
 
 }

@@ -12,6 +12,7 @@ class GameBackGround  extends egret.Sprite{
 		this.createCoinBg();
 		this.createCoinOutputBg();
 		// console.log("背景图share加载:"+GameLogic.closeShare);
+		this.getVideoAd();
 		if(!GameLogic.closeShare &&  typeof(GameLogic.closeShare) != "undefined"){
 			this.createShareBg();
 		}
@@ -244,13 +245,20 @@ class GameBackGround  extends egret.Sprite{
 	private htimeText:egret.TextField;
 	public htimer: egret.Timer = new egret.Timer(1000, 0);
 	/**
-	 * 创建分享两倍金币背景图
+	 * 创建分享加速金币背景图
 	 * author:bigfoot
 	 * date:2018/08/18
 	 */
 	private createShareBg(){
 		this.share5x = new egret.Bitmap();
-		this.share5x.texture = RES.getRes("ui_share_5x_01_a_png");
+		console.log(GameData.get5xVideoAd);
+		if(GameData.get5xVideoAd){
+			this.share5x.texture = RES.getRes("ui_share_5x_02_a_png");
+			this.share5x.addEventListener(egret.TouchEvent.TOUCH_TAP, this.rewardVideo, this);			
+		}else{
+			this.share5x.texture = RES.getRes("ui_share_5x_01_a_png");
+			this.share5x.addEventListener(egret.TouchEvent.TOUCH_TAP, this.share, this);
+		}
 		this.share5x.width = GameData.girdWidth*1.05;
 		this.share5x.height = GameData.girdWidth*0.46;
 		this.share5x.x = GameData.stageW - GameData.girdWidth*1.3;
@@ -261,7 +269,7 @@ class GameBackGround  extends egret.Sprite{
 		this.hint.y = this.share5x.y;
 		this.addChild(this.hint);
 		this.share5x.touchEnabled = true;
-		this.share5x.addEventListener(egret.TouchEvent.TOUCH_TAP, this.share, this);
+		
 		// this.share5x.addEventListener(egret.TouchEvent.TOUCH_TAP, this.x5profit, this);
 	}
 
@@ -274,11 +282,31 @@ class GameBackGround  extends egret.Sprite{
         // this.htimer.addEventListener(egret.TimerEvent.TIMER_COMPLETE,this.timerComFunc,this);	
 		// GameData.secCoin = CommonFuction.cheng(GameData.secCoin,'5');//秒产5
 	}
+	  private rewardVideo(){
+		console.log("rewardVedio");	
+		this.rewardedVideoAd.load().then(() =>this.rewardedVideoAd.show()).catch(err => console.log(err.errMsg));
+		this.rewardedVideoAd.onClose(
+			res => {
+			if(!this.rewardedVideoAd) return
+			this.rewardedVideoAd.offClose()
+			if (res && res.isEnded || res === undefined) {
 
+				this.x5profit();
+			}
+			else {
+				console.log("只有看完广告才能领取")
+			}
+		});
+		
+    }
 	public x5profit(){
 		this.share5x.removeEventListener(egret.TouchEvent.TOUCH_TAP, this.share, this);
 		this.share5xOn= new egret.Bitmap();
-		this.share5xOn.texture = RES.getRes("ui_share_5x_01_b_png");
+		if(GameData.get5xVideoAd){
+			this.share5xOn.texture = RES.getRes("ui_share_5x_02_b_png");
+		}else{
+			this.share5xOn.texture = RES.getRes("ui_share_5x_01_b_png");
+		}
 		this.share5xOn.width = GameData.girdWidth*1.05;
 		this.share5xOn.height = GameData.girdWidth*0.46;
 		this.share5xOn.x = GameData.stageW - GameData.girdWidth*1.3;
@@ -316,7 +344,11 @@ class GameBackGround  extends egret.Sprite{
 	public shareContinue(){
 		//console.log("继续5倍秒产:");
 		this.share5xOn= new egret.Bitmap();
-		this.share5xOn.texture = RES.getRes("ui_share_5x_01_b_png");
+		if(GameData.get5xVideoAd){
+			this.share5xOn.texture = RES.getRes("ui_share_5x_02_b_png");
+		}else{
+			this.share5xOn.texture = RES.getRes("ui_share_5x_01_b_png");
+		}
 		this.share5xOn.width = GameData.girdWidth*1.05;
 		this.share5xOn.height = GameData.girdWidth*0.46;
 		this.share5xOn.x = GameData.stageW - GameData.girdWidth*1.3;
@@ -438,6 +470,21 @@ class GameBackGround  extends egret.Sprite{
 		GameData.girdImageName = "scene_0"+i+"_base_small_png";
 		GameData.girdLockImageName = "scene_0"+i+"_base_small_lock_png";
 		GameData.setSceneData = true;
+	}
+
+	private rewardedVideoAd:any;
+	private getVideoAd(){
+		console.log("拉取5X视频广告");
+		this.rewardedVideoAd = platform.createRewardedVideoAd('adunit-ac322a1c1945d406');
+		this.rewardedVideoAd.onLoad(() => {
+			console.log("5X拉取成功");
+			GameData.get5xVideoAd = true;
+		})
+		this.rewardedVideoAd.onError(err => {
+			console.log(err)
+			GameData.get5xVideoAd = false;
+		})	
+		console.log(GameData.get5xVideoAd);		
 	}
 
 }
